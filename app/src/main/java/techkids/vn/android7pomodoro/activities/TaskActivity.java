@@ -1,4 +1,4 @@
-package com.example.quocvietdang.pomodoro1.activities;
+package techkids.vn.android7pomodoro.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.quocvietdang.pomodoro1.R;
+import techkids.vn.android7pomodoro.R;
 
 public class TaskActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,7 +57,7 @@ public class TaskActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.task, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

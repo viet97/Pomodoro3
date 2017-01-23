@@ -1,4 +1,4 @@
-package com.example.quocvietdang.pomodoro1;
+package techkids.vn.android7pomodoro;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.quocvietdang.pomodoro1", appContext.getPackageName());
+        assertEquals("techkids.vn.android7pomodoro", appContext.getPackageName());
     }
 }

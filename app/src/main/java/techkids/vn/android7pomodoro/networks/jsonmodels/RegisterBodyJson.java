@@ -1,14 +1,18 @@
-package com.example.quocvietdang.pomodoro1.settings;
+package techkids.vn.android7pomodoro.networks.jsonmodels;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Quoc Viet Dang on 1/14/2017.
+ * Created by Quoc Viet Dang on 1/21/2017.
  */
 
-public class LoginCredentials {
+public class RegisterBodyJson {
     private String username;
+
+    @SerializedName("password")
     private String password;
 
-    public LoginCredentials(String username, String password) {
+    public RegisterBodyJson(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -31,7 +35,7 @@ public class LoginCredentials {
 
     @Override
     public String toString() {
-        return "LoginCredendials{" +
+        return "RegisterBodyJson{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';

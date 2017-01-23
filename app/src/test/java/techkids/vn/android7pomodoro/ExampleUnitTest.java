@@ -1,4 +1,4 @@
-package com.example.quocvietdang.pomodoro1;
+package techkids.vn.android7pomodoro;
 
 import org.junit.Test;
 
