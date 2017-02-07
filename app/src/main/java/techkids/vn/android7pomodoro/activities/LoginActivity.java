@@ -41,6 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button btLogin;
 
     Retrofit retrofit;
+    private String token;
+    private String username;
+    private String password;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
-    private String username;
-    private String password;
 
     private void attemptRegister() {
 
@@ -117,24 +118,29 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendLogin(String username, String password) {
+
+        //1:create retrofit
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://a-task.herokuapp.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        //2:creat service
         LoginService loginService = retrofit.create(LoginService.class);
 
         // data & format
         // format => MediaType
         // data => json
+
         MediaType jsonMediaType = MediaType.parse("application/json");
         String loginJson = (new Gson()).toJson(new LoginBodyJson(username, password));
 
         RequestBody loginBody = RequestBody.create(jsonMediaType, loginJson);
 
-        loginService
-                .login(loginBody)
-                .enqueue(new Callback<LoginResponseJson>() {
+        //3: create call
+        Call<LoginResponseJson> loginCall = loginService.login(loginBody);
+
+        loginCall.enqueue(new Callback<LoginResponseJson>() {
                     @Override
                     public void onResponse(Call<LoginResponseJson> call, Response<LoginResponseJson> response) {
                         LoginResponseJson loginResponseJson = response.body();
@@ -143,8 +149,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             Log.d(TAG, String.format("onResponse, oh yeah: %s", loginResponseJson));
                             if (response.code() == 200) {
+                                token = loginResponseJson.getAccess_token();
                                 onLoginSuccess();
-
                             }
                         }
                     }
@@ -157,13 +163,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void skipLoginIfPossible() {
-        if (SharedPrefs.getInstance().getLoginCredendials() != null) {
+        if (SharedPrefs.getInstance().getAccessToken() != null) {
             gotoTaskActivity();
         }
     }
 
     private void onLoginSuccess() {
-        SharedPrefs.getInstance().put(new LoginCredentials(username, password));
+        SharedPrefs.getInstance().put(new LoginCredentials(username, password,token));
         Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
         gotoTaskActivity();
     }
