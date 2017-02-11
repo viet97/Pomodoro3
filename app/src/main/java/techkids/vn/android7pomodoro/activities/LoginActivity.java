@@ -1,19 +1,30 @@
 package techkids.vn.android7pomodoro.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import butterknife.BindView;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -32,14 +43,14 @@ import techkids.vn.android7pomodoro.settings.LoginCredentials;
 import techkids.vn.android7pomodoro.settings.SharedPrefs;
 
 public class LoginActivity extends AppCompatActivity {
-
     private static final String TAG = "LoginActivity";
-
     private EditText etUsername;
     private EditText etPassword;
     private Button btRegister;
     private Button btLogin;
-
+    TextInputLayout tlUsername;
+    TextInputLayout tlPassword;
+    private ProgressBar pb;
     Retrofit retrofit;
     private String token;
     private String username;
@@ -51,31 +62,42 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //skipLoginIfPossible();
-
         setContentView(R.layout.activity_login);
-
+        pb = (ProgressBar) this.findViewById(R.id.pb);
         etUsername = (EditText) this.findViewById(R.id.et_username);
         etPassword = (EditText) this.findViewById(R.id.et_password);
         btRegister = (Button) this.findViewById(R.id.bt_register);
         btLogin = (Button) this.findViewById(R.id.bt_login);
-
+        tlUsername = ( TextInputLayout) this.findViewById(R.id.tl_username);
+        tlPassword = ( TextInputLayout) this.findViewById(R.id.tl_password);
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptLogin();
             }
         });
+
         btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                attemptRegister();
+            public void onClick(View v) {attemptRegister();
             }
         });
+        check(etUsername,tlUsername);
+        check(etPassword,tlPassword);
 
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    attemptLogin();
+                    return false;
+                }
+                return false;
+            }
+        });
     }
 
     private void attemptRegister() {
-
         username = etUsername.getText().toString();
         password = etPassword.getText().toString();
         sendRegister(username,password);
@@ -140,9 +162,10 @@ public class LoginActivity extends AppCompatActivity {
         //3: create call
         Call<LoginResponseJson> loginCall = loginService.login(loginBody);
 
-        loginCall.enqueue(new Callback<LoginResponseJson>() {
+        loginCall.enqueue(new Callback<LoginResponseJson>() {;
                     @Override
                     public void onResponse(Call<LoginResponseJson> call, Response<LoginResponseJson> response) {
+                        pb.setVisibility(View.INVISIBLE);
                         LoginResponseJson loginResponseJson = response.body();
                         if (loginResponseJson == null) {
                             Log.d(TAG, "onResponse: Could not parse body");
@@ -157,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<LoginResponseJson> call, Throwable t) {
+                        pb.setVisibility(View.INVISIBLE);
                         Log.d(TAG, String.format("onFailure: %s", t));
                     }
                 });
@@ -178,6 +202,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
+        pb.setVisibility(View.VISIBLE);
         username = etUsername.getText().toString();
         password = etPassword.getText().toString();
 
@@ -186,7 +211,40 @@ public class LoginActivity extends AppCompatActivity {
 
     private void gotoTaskActivity() {
         Intent intent = new Intent(this, TaskActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+    private void check(final EditText editText, final TextInputLayout textInputLayout){
+     editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+         @Override
+         public void onFocusChange(View v, boolean hasFocus) {
+             textInputLayout.setError(null);
+            if (editText.getText().toString().equalsIgnoreCase("")) {
+                if (editText.getId()==etUsername.getId()) textInputLayout.setError("Enter your username");
+                else textInputLayout.setError("Enter your passowrd");
+            }
+             else textInputLayout.setError(null);
+         }
+     });
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                textInputLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (editText.getText().toString().equalsIgnoreCase("")){
+                    editText.setError("this can not be blank");
+                }
+                else editText.setError(null);
+            }
+        });
+
     }
 
 }

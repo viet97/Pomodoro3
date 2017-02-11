@@ -8,4 +8,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_height">36dp</dimen>
     <dimen name="button_margintop">6dp</dimen>
+    <dimen name="list_item_height">64dp</dimen>
 </resources>
