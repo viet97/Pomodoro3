@@ -27,11 +27,11 @@ public class ColorViewHolder extends RecyclerView.ViewHolder {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageView.isShown()){
-                    imageView.setVisibility(View.INVISIBLE);
-                }else{
-                    imageView.setVisibility(View.INVISIBLE);
-                }
+               if (imageView.getVisibility()==View.INVISIBLE){
+                    imageView.setVisibility(View.VISIBLE);
+               }else{
+                   imageView.setVisibility(View.INVISIBLE);
+               }
             }
         });
     }

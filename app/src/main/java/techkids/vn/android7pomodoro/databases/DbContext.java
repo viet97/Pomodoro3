@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import techkids.vn.android7pomodoro.R;
 import techkids.vn.android7pomodoro.databases.models.Task;
 
 /**
@@ -28,11 +29,11 @@ public class DbContext {
     }
     public List<String> allcolor() {
         ArrayList<String> colors = new ArrayList<>();
-        colors.add("#EF5350");
-        colors.add("#64B5F6 ");
-        colors.add("#82B1FF");
-        colors.add("#FF9800");
-        colors.add("#3949AB");
+        colors.add("#C62828");
+        colors.add("#AD1457");
+        colors.add("#6A1B9A");
+        colors.add("#BBDEFB");
+        colors.add("#7C4DFF");
         colors.add("#EA80FC");
         colors.add("#33691E");
         colors.add("#FFFF00");

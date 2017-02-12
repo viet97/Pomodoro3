@@ -33,6 +33,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import techkids.vn.android7pomodoro.R;
+import techkids.vn.android7pomodoro.databases.models.Task;
 import techkids.vn.android7pomodoro.networks.jsonmodels.LoginBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.LoginResponseJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.RegisterBodyJson;
@@ -84,7 +85,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         check(etUsername,tlUsername);
         check(etPassword,tlPassword);
-
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -95,6 +95,10 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        Intent intent = new Intent(this, ColorActivity.class);
+        //  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void attemptRegister() {
@@ -211,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void gotoTaskActivity() {
         Intent intent = new Intent(this, TaskActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+      //  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
     private void check(final EditText editText, final TextInputLayout textInputLayout){

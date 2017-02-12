@@ -19,6 +19,10 @@ public class   ColorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color);
+       setupUI();
+    }
+
+    private void setupUI() {
         colorAdapter=new ColorAdapter();
         ButterKnife.bind(this);
         recyclerView.setAdapter(colorAdapter);
