@@ -95,10 +95,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        Intent intent = new Intent(this, ColorActivity.class);
-        //  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 
     private void attemptRegister() {

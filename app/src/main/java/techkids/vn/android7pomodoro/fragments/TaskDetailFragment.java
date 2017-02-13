@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.zip.Inflater;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import techkids.vn.android7pomodoro.R;
@@ -29,6 +31,7 @@ public class TaskDetailFragment extends Fragment {
     RecyclerView recyclerView;
     ColorAdapter colorAdapter ;
 
+
     public TaskDetailFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -42,7 +45,7 @@ public class TaskDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task_detail, container, false);
         setupUI(view);
 
-        return inflater.inflate(R.layout.fragment_task_detail, container, false);
+        return view;
 
     }
 

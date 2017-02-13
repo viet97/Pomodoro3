@@ -1,6 +1,7 @@
 package techkids.vn.android7pomodoro.fragments;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +27,7 @@ import techkids.vn.android7pomodoro.adapters.TaskAdapter;
  * A simple {@link Fragment} subclass.
  */
 public class TaskFragment extends Fragment {
-
+    ReplaceFragmentListener r;
     private TaskAdapter taskAdapter;
     @BindView(R.id.rv_task)
     RecyclerView rvTask;
@@ -42,6 +43,7 @@ public class TaskFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         setupUI(view);
         return view;
+
     }
 
     @Override
@@ -63,7 +65,11 @@ public class TaskFragment extends Fragment {
     @OnClick(R.id.fab)
     void onclick(){
         //TODO: MAKE TASKACTIVITY AND FRAGMENT INDEPENDENT
-        ((TaskActivity)getActivity()).replaceFragment(new TaskDetailFragment(),true);
+        r.replaceFragment(new TaskDetailFragment(),true);
+        SetListener(r);
+    }
+    public  void SetListener(ReplaceFragmentListener r){
+        this.r = r;
     }
 
 }

@@ -3,14 +3,8 @@ package techkids.vn.android7pomodoro.activities;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,21 +16,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.BindDrawable;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import techkids.vn.android7pomodoro.R;
-import techkids.vn.android7pomodoro.adapters.TaskAdapter;
-import techkids.vn.android7pomodoro.fragments.TaskDetailFragment;
+import techkids.vn.android7pomodoro.fragments.ReplaceFragmentListener;
 import techkids.vn.android7pomodoro.fragments.TaskFragment;
 
 public class TaskActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener,ReplaceFragmentListener{
     private static final String TAG = "TAG";
     @BindDrawable(R.drawable.ic_arrow_back_black_24px)
     Drawable drawable;
+    private TaskFragment taskFragment;
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
@@ -73,18 +64,16 @@ public class TaskActivity extends AppCompatActivity
         });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        replaceFragment(new TaskFragment(),false);
-
-
-
+         taskFragment = new TaskFragment();
+        this.replaceFragment(taskFragment,false);
+        taskFragment.SetListener(this);
     }
 
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -137,19 +126,21 @@ public class TaskActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-  public void replaceFragment(Fragment fragment, boolean addToBackstack){
-      if (addToBackstack) {
-          getSupportFragmentManager()
-                  .beginTransaction()
-                  .replace(R.id.fl_main, fragment)
-                  .addToBackStack(null)
-                  .commit();
-      }
-      else {
-          getSupportFragmentManager()
-                  .beginTransaction()
-                  .replace(R.id.fl_main, fragment)
-                  .commit();
-      }
-  }
+
+    public void replaceFragment(Fragment fragment, Boolean b) {
+        if (b) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_main, fragment)
+                    .commit();
+        }
+    }
+
 }
