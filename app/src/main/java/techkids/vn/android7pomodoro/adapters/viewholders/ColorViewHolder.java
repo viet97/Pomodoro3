@@ -24,20 +24,16 @@ public class ColorViewHolder extends RecyclerView.ViewHolder {
     public ColorViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               if (imageView.getVisibility()==View.INVISIBLE){
-                    imageView.setVisibility(View.VISIBLE);
-               }else{
-                   imageView.setVisibility(View.INVISIBLE);
-               }
-            }
-        });
     }
     public void bind(String color){
         GradientDrawable drawable = (GradientDrawable)view.getBackground();
         drawable.setColor(Color.parseColor(color));
     }
-
+    public void setCheck(boolean check){
+        if (check){
+            imageView.setVisibility(View.VISIBLE);
+        }else{
+            imageView.setVisibility(View.INVISIBLE);
+        }
+    }
 }

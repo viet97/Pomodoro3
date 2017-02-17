@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //skipLoginIfPossible();
+        skipLoginIfPossible();
         setContentView(R.layout.activity_login);
         pb = (ProgressBar) this.findViewById(R.id.pb);
         etUsername = (EditText) this.findViewById(R.id.et_username);
@@ -192,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void onLoginSuccess() {
+    private void    onLoginSuccess() {
         SharedPrefs.getInstance().put(new LoginCredentials(username, password,token));
         Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
         gotoTaskActivity();

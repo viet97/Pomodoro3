@@ -7,6 +7,8 @@
     <!-- TODO: Update blank fragment layout -->
 
 <EditText
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:backgroundTintMode="src_in"
     android:backgroundTint="#9E9E9E"
     android:hint="Name"
@@ -14,6 +16,8 @@
     android:layout_width="match_parent"
     android:layout_height="80dp" />
 <TextView
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:textColor="#9E9E9E"
     android:layout_gravity="top"
     android:text="Payment per secs"
@@ -21,18 +25,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>
     <EditText
-        android:backgroundTintMode="src_in"
-        android:backgroundTint="#9E9E9E"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:id="@+id/d_payment"
         android:layout_marginTop="100dp"
-        android:text="0.0"
+        android:inputType="numberDecimal"
         android:layout_width="match_parent"
         android:layout_height="80dp" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
         android:layout_marginTop="180dp"
         android:id="@+id/rv_color1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="150dp"/>
 </FrameLayout>

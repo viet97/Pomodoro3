@@ -12,20 +12,27 @@ import techkids.vn.android7pomodoro.databases.models.Task;
  */
 
 public class DbContext {
+    ArrayList<Task> tasks ;
     public final  static  DbContext instance = new DbContext();
     public List<Task> alltask() {
         //Fake data
         //1 : Create array list
-        ArrayList<Task> tasks = new ArrayList<>();
 
 
-        //2: add some task and return
-            tasks.add(new Task("Study RecycleView","#C62828"));
-            tasks.add(new Task("Study RecycleView1 ","#AD1457"));
-            tasks.add(new Task("Study RecycleView2","#6A1B9A"));
-            tasks.add(new Task("Study RecycleView3","#BBDEFB"));
-            tasks.add(new Task("Study RecycleView4","#7C4DFF"));
+        if (tasks == null) {
+
+            tasks = new ArrayList<>();
+            //2: add some task and return
+            tasks.add(new Task("Study RecycleView", "#C62828",2.3f));
+            tasks.add(new Task("Study RecycleView1 ", "#AD1457",1.1f));
+            tasks.add(new Task("Study RecycleView2", "#6A1B9A",0.5f));
+            tasks.add(new Task("Study RecycleView3", "#BBDEFB",2.3f));
+            tasks.add(new Task("Study RecycleView4", "#7C4DFF"));
+
+        }
+
         return tasks;
+
     }
     public List<String> allcolor() {
         ArrayList<String> colors = new ArrayList<>();
@@ -38,5 +45,9 @@ public class DbContext {
         colors.add("#33691E");
         colors.add("#FFFF00");
         return colors;
+    }
+
+    public void addTask(Task newTask) {
+        tasks.add(newTask);
     }
 }

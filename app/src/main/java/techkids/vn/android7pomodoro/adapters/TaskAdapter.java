@@ -16,6 +16,15 @@ import techkids.vn.android7pomodoro.databases.models.Task;
  */
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
+    public interface TaskItemClickListener{
+        void onItemClick(Task task);
+    }
+     private TaskItemClickListener taskItemClickListener;
+
+    public void setTaskItemClickListener(TaskItemClickListener taskItemClickListener) {
+        this.taskItemClickListener = taskItemClickListener;
+    }
+
     @Override
     public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //1: Create View
@@ -32,10 +41,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
         //1: Get data based on position
-        Task task = DbContext.instance.alltask().get(position);
+        final Task task = DbContext.instance.alltask().get(position);
 
         //2: Bind data into view
         holder.bind(task);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (taskItemClickListener != null){
+                    taskItemClickListener.onItemClick(task);
+
+                }
+            }
+        });
     }
 
     @Override
