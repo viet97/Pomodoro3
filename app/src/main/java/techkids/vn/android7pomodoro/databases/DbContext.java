@@ -32,7 +32,6 @@ public class DbContext {
         }
 
         return tasks;
-
     }
     public List<String> allcolor() {
         ArrayList<String> colors = new ArrayList<>();

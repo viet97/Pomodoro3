@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import techkids.vn.android7pomodoro.R;
+import techkids.vn.android7pomodoro.activities.TaskActivity;
 import techkids.vn.android7pomodoro.adapters.TaskAdapter;
 import techkids.vn.android7pomodoro.databases.models.Task;
 
@@ -35,7 +36,7 @@ public class TaskFragment extends Fragment {
         // Required empty public constructor
     }
     TaskDetailFragment taskDetailFragment;
-
+    TimerFragment timerFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +55,7 @@ public class TaskFragment extends Fragment {
 
     private void setupUI(View view) {
         taskDetailFragment = new TaskDetailFragment();
+        timerFragment = new TimerFragment();
         ButterKnife.bind(this,view);
         taskAdapter = new TaskAdapter();
         taskAdapter.setTaskItemClickListener(new TaskAdapter.TaskItemClickListener() {
@@ -66,6 +68,14 @@ public class TaskFragment extends Fragment {
                 SetListener(r);
                 Log.d(TAG, String.format("onItemClick: %s", task));
                 taskDetailFragment.setTask(task);
+            }
+        });
+        taskAdapter.setTaskTimeClickListener(new TaskAdapter.TaskTimeClickListener() {
+            @Override
+            public void timeTaskClick(Task task) {
+
+                r.replaceFragment(timerFragment,true);
+                SetListener(r);
             }
         });
 

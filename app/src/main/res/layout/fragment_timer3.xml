@@ -1,0 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="techkids.vn.android7pomodoro.fragments.TimerFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_marginTop="120dp"
+            android:id="@+id/tv_time"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15:59"
+            android:textSize="40dp"
+            android:textColor="#000000"
+            />
+        <ProgressBar
+            android:id="@+id/pb_time"
+            android:max="1500"
+            android:progress="959"
+            android:layout_below="@+id/tv_time"
+            style="?android:progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"/>
+        <Button
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="60dp"
+            android:text="Start"
+            android:layout_below="@+id/pb_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="60dp"
+            android:layout_alignParentEnd="true"
+            android:text="Pause"
+            android:layout_below="@+id/pb_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</FrameLayout>

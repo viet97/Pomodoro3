@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -20,11 +21,18 @@ public class TaskViewHolder extends RecyclerView.ViewHolder {
     View vTaskColor;
     @BindView(R.id.tv_task_name)
     TextView tvTaskname;
+    @BindView(R.id.time_task)
+    ImageButton timeTask;
     public TaskViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
 
     }
+
+    public ImageButton getTimeTask() {
+        return timeTask;
+    }
+
     public void bind(Task task){
         //1: Binde Color
         //vTaskColor.setBackgroundColor(Color.parseColor(task.getColor()));

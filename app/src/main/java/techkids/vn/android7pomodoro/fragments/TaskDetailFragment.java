@@ -34,7 +34,7 @@ public class TaskDetailFragment extends Fragment {
     ColorAdapter colorAdapter ;
     @BindView(R.id.d_name)
     EditText etTaskName;
-   private OnOptionMenuBehavior onOptionMenuBehavior;
+     private OnOptionMenuBehavior onOptionMenuBehavior;
     @BindView(R.id.d_payment)
     EditText etPaymentPerHour;
     private String title;
@@ -74,6 +74,7 @@ public class TaskDetailFragment extends Fragment {
         if (task != null){
             etTaskName.setText(task.getName());
             etPaymentPerHour.setText(String.format("%.1f",task.getPaymentPerHour()));
+
             colorAdapter.setColor(task.getColor());
         }
 
@@ -96,7 +97,8 @@ public class TaskDetailFragment extends Fragment {
         if(item.getItemId() == R.id.menu_item){
             //Get Data from UI
             String taskName = etTaskName.getText().toString();
-             float paymentPerHour = Float.parseFloat(etPaymentPerHour.getText().toString());
+            String s = etPaymentPerHour.getText().toString().replace(",",".");
+             float paymentPerHour = Float.parseFloat(s);
             String color = colorAdapter.getSelectedColor();
            // Log.d(TAG, String.format("onOptionsItemSelected:%s ",paymentPerHour ));
             //Create a new Task
