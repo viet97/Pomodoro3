@@ -14,13 +14,31 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import techkids.vn.android7pomodoro.R;
 import techkids.vn.android7pomodoro.activities.TaskActivity;
 import techkids.vn.android7pomodoro.adapters.TaskAdapter;
+import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
+import techkids.vn.android7pomodoro.networks.NetContext;
+import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
+import techkids.vn.android7pomodoro.networks.jsonmodels.LoginResponseJson;
+import techkids.vn.android7pomodoro.networks.services.GetAllTaskService;
 
 import static android.content.ContentValues.TAG;
 
@@ -28,6 +46,7 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class TaskFragment extends Fragment {
+    String token;
     ReplaceFragmentListener r;
     private TaskAdapter taskAdapter;
     @BindView(R.id.rv_task)
@@ -57,12 +76,13 @@ public class TaskFragment extends Fragment {
         taskDetailFragment = new TaskDetailFragment();
         timerFragment = new TimerFragment();
         ButterKnife.bind(this,view);
+        //Token
+
         taskAdapter = new TaskAdapter();
         taskAdapter.setTaskItemClickListener(new TaskAdapter.TaskItemClickListener() {
             @Override
             public void onItemClick(Task task) {
                 taskDetailFragment.setOnOptionMenuBehavior(new EditTask());
-                taskAdapter = new TaskAdapter();
                 taskDetailFragment.setTitle("Edit Task");
                 r.replaceFragment(taskDetailFragment,true);
                 SetListener(r);
@@ -76,16 +96,18 @@ public class TaskFragment extends Fragment {
 
                 r.replaceFragment(timerFragment,true);
                 SetListener(r);
+
             }
         });
-
         rvTask.setAdapter(taskAdapter);
         rvTask.setLayoutManager(new LinearLayoutManager(this.getContext()));
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Tasks");
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this.getContext(),DividerItemDecoration.VERTICAL);
         rvTask.addItemDecoration(dividerItemDecoration);
         setHasOptionsMenu(true);
+        taskAdapter.notifyDataSetChanged();
     }
+
     @OnClick(R.id.fab)
     void onclick(){
         //TODO: MAKE TASKACTIVITY AND FRAGMENT INDEPENDENT

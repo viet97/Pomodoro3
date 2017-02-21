@@ -8,7 +8,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class NetContext {
+    public static  final NetContext instance = new NetContext();
+     public String token;
     private Retrofit retrofit;
+
+    public NetContext(String token) {
+        this.token = token;
+    }
 
     public NetContext() {
         retrofit = new Retrofit.Builder()
@@ -16,4 +22,5 @@ public class NetContext {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
+
 }

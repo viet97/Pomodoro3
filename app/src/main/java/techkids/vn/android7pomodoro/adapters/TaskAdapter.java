@@ -44,14 +44,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
         //2: Create ViewHolder
         TaskViewHolder taskViewHolder = new TaskViewHolder(itemView);
-
         return taskViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final TaskViewHolder holder, int position) {
         //1: Get data based on position
-        final Task task = DbContext.instance.alltask().get(position);
+        final Task task = DbContext.instance.tasks.get(position);
         //2: Bind data into view
         holder.bind(task);
         holder.itemView.setOnClickListener(new View.OnClickListener() {

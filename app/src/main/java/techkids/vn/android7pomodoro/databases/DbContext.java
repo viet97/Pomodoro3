@@ -12,24 +12,11 @@ import techkids.vn.android7pomodoro.databases.models.Task;
  */
 
 public class DbContext {
-    ArrayList<Task> tasks ;
+    public ArrayList<Task> tasks = new ArrayList<>();
     public final  static  DbContext instance = new DbContext();
     public List<Task> alltask() {
         //Fake data
         //1 : Create array list
-
-
-        if (tasks == null) {
-
-            tasks = new ArrayList<>();
-            //2: add some task and return
-            tasks.add(new Task("Study RecycleView", "#C62828",2.3f));
-            tasks.add(new Task("Study RecycleView1 ", "#AD1457",1.1f));
-            tasks.add(new Task("Study RecycleView2", "#6A1B9A",0.5f));
-            tasks.add(new Task("Study RecycleView3", "#BBDEFB",2.3f));
-            tasks.add(new Task("Study RecycleView4", "#7C4DFF"));
-
-        }
 
         return tasks;
     }

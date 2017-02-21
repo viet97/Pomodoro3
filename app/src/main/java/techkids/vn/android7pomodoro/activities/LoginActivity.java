@@ -24,8 +24,14 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.util.List;
+
 import butterknife.BindView;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,15 +39,21 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import techkids.vn.android7pomodoro.R;
+import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
+import techkids.vn.android7pomodoro.networks.NetContext;
+import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.LoginBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.LoginResponseJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.RegisterBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.RegisterResponseJson;
+import techkids.vn.android7pomodoro.networks.services.GetAllTaskService;
 import techkids.vn.android7pomodoro.networks.services.LoginService;
 import techkids.vn.android7pomodoro.networks.services.RegisterService;
 import techkids.vn.android7pomodoro.settings.LoginCredentials;
 import techkids.vn.android7pomodoro.settings.SharedPrefs;
+
+import static android.content.ContentValues.TAG;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -62,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        skipLoginIfPossible();
+      // skipLoginIfPossible();
         setContentView(R.layout.activity_login);
         pb = (ProgressBar) this.findViewById(R.id.pb);
         etUsername = (EditText) this.findViewById(R.id.et_username);
@@ -172,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             Log.d(TAG, String.format("onResponse, oh yeah: %s", loginResponseJson));
                             if (response.code() == 200) {
-                                token = loginResponseJson.getAccess_token();
+                                NetContext.instance.token = loginResponseJson.getAccess_token();
                                 onLoginSuccess();
                             }
                         }
@@ -184,18 +196,63 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, String.format("onFailure: %s", t));
                     }
                 });
+
+
     }
 
     private void skipLoginIfPossible() {
         if (SharedPrefs.getInstance().getAccessToken() != null) {
             gotoTaskActivity();
         }
+
     }
 
     private void    onLoginSuccess() {
         SharedPrefs.getInstance().put(new LoginCredentials(username, password,token));
         Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
         gotoTaskActivity();
+
+        //add Header
+        OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
+        httpclient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .method(original.method(),original.body())
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+        OkHttpClient client = httpclient.build();
+        //Create Retrofit
+        Retrofit retrofit = new Retrofit
+                .Builder()
+                .baseUrl("http://a-task.herokuapp.com/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        GetAllTaskService getAllTaskService = retrofit.create(GetAllTaskService.class);
+
+        getAllTaskService.getAllTask().enqueue(new Callback<List<GetAllTaskResponeJson>>() {
+            @Override
+            public void onResponse(Call<List<GetAllTaskResponeJson>> call, Response<List<GetAllTaskResponeJson>> response) {
+                for (GetAllTaskResponeJson getAllTaskResponeJson : response.body()) {
+                    Log.d(TAG, String.format("onResponse: %s", getAllTaskResponeJson));
+                    Task task = new Task(getAllTaskResponeJson.getName(),getAllTaskResponeJson.getColor(),getAllTaskResponeJson.getPayment());
+                    if (task.getName()!= null) {
+                        DbContext.instance.addTask(task);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
+            }
+        });
     }
     private void onRegisterSuccess() {
         Toast.makeText(this, "Register success", Toast.LENGTH_SHORT).show();

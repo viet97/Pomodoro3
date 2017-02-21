@@ -67,6 +67,8 @@ public class TaskActivity extends AppCompatActivity
          taskFragment = new TaskFragment();
         this.replaceFragment(taskFragment,false);
         taskFragment.SetListener(this);
+
+
     }
 
 
