@@ -108,6 +108,88 @@ public class TaskFragment extends Fragment {
         rvTask.addItemDecoration(dividerItemDecoration);
         setHasOptionsMenu(true);
         //add Header
+       getAllTask();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setCancelable(true);
+        builder.setTitle("Delete");
+        builder.setMessage("Are you sure ?");
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       sendDelete();
+
+                    }
+                });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        final AlertDialog dialog = builder.create();
+
+
+
+        taskAdapter.setTaskLongClickListener(new TaskAdapter.TaskLongClickListener() {
+            @Override
+            public void taskLongClick() {
+                dialog.show();
+            }
+        });
+        taskDetailFragment.setnotifydata(new TaskDetailFragment.Notifydata() {
+            @Override
+            public void changedata() {
+                taskAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void sendDelete() {
+        OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
+        httpclient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .method(original.method(),original.body())
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+        OkHttpClient client = httpclient.build();
+
+        //Create Retrofit
+        Retrofit retrofit = new Retrofit
+                .Builder()
+                .baseUrl("http://a-task.herokuapp.com/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        DeleteService deleteService = retrofit.create(DeleteService.class);
+
+        deleteService.deleteTask(DbContext.instance.tasks.get(taskAdapter.getSelection()).getLocalid()).enqueue(new Callback<DeleteJson>() {
+            @Override
+            public void onResponse(Call<DeleteJson> call, Response<DeleteJson> response) {
+                Log.d(TAG, String.format("onResponse: %s",response.body() ));
+                DbContext.instance.tasks.remove(taskAdapter.getSelection());
+                taskAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(Call<DeleteJson> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
+                sendDelete();
+
+            }
+        });
+    }
+
+    private void getAllTask() {
         OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
         httpclient.addInterceptor(new Interceptor() {
             @Override
@@ -153,78 +235,7 @@ public class TaskFragment extends Fragment {
             @Override
             public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-            }
-        });
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
-        builder.setCancelable(true);
-        builder.setTitle("Delete");
-        builder.setMessage("Are you sure ?");
-        builder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
-                        httpclient.addInterceptor(new Interceptor() {
-                            @Override
-                            public okhttp3.Response intercept(Chain chain) throws IOException {
-                                Request original = chain.request();
-
-                                Request request = original.newBuilder()
-                                        .header("Authorization","JWT "+ NetContext.instance.token)
-                                        .method(original.method(),original.body())
-                                        .build();
-                                return chain.proceed(request);
-                            }
-                        });
-                        OkHttpClient client = httpclient.build();
-
-                        //Create Retrofit
-                        Retrofit retrofit = new Retrofit
-                                .Builder()
-                                .baseUrl("http://a-task.herokuapp.com/api/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .client(client)
-                                .build();
-
-                        DeleteService deleteService = retrofit.create(DeleteService.class);
-
-                        deleteService.deleteTask(DbContext.instance.tasks.get(taskAdapter.getSelection()).getLocalid()).enqueue(new Callback<DeleteJson>() {
-                            @Override
-                            public void onResponse(Call<DeleteJson> call, Response<DeleteJson> response) {
-                                Log.d(TAG, String.format("onResponse: %s",response.body() ));
-                                DbContext.instance.tasks.remove(taskAdapter.getSelection());
-                               taskAdapter.notifyDataSetChanged();
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<DeleteJson> call, Throwable t) {
-                                Log.d(TAG, "onFailure: ");
-                            }
-                        });
-
-                    }
-                });
-        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        final AlertDialog dialog = builder.create();
-
-
-
-        taskAdapter.setTaskLongClickListener(new TaskAdapter.TaskLongClickListener() {
-            @Override
-            public void taskLongClick() {
-                dialog.show();
-            }
-        });
-        taskDetailFragment.setnotifydata(new TaskDetailFragment.Notifydata() {
-            @Override
-            public void changedata() {
-                taskAdapter.notifyDataSetChanged();
+                getAllTask();
             }
         });
     }

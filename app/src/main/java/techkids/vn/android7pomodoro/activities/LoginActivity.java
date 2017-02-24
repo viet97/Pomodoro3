@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
         sendRegister(username,password);
 
     }
-    private void sendRegister(String username, String password){
+    private void sendRegister(final String username, final String password){
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://a-task.herokuapp.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -150,12 +150,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<RegisterResponseJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: 0");
+                sendRegister(username,password);
             }
         });
     }
 
 
-    private void sendLogin(String username, String password) {
+    private void sendLogin(final String username, final String password) {
 
         //1:create retrofit
 
@@ -193,8 +194,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<LoginResponseJson> call, Throwable t) {
-                        pb.setVisibility(View.INVISIBLE);
                         Log.d(TAG, String.format("onFailure: %s", t));
+                        sendLogin(username,password);
                     }
                 });
 

@@ -192,6 +192,7 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
+                sendNewTask();
             }
         });
     }
@@ -237,6 +238,7 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
+                sendEdit();
             }
         });
     }
