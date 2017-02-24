@@ -1,10 +1,12 @@
 package techkids.vn.android7pomodoro.activities;
 
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,12 +19,14 @@ import android.view.MenuItem;
 
 import butterknife.BindDrawable;
 import techkids.vn.android7pomodoro.R;
+import techkids.vn.android7pomodoro.adapters.TaskAdapter;
 import techkids.vn.android7pomodoro.fragments.ReplaceFragmentListener;
 import techkids.vn.android7pomodoro.fragments.TaskFragment;
 
 public class TaskActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ReplaceFragmentListener{
     private static final String TAG = "TAG";
+    private TaskAdapter.TaskLongClickListener taskLongClickListener;
     @BindDrawable(R.drawable.ic_arrow_back_black_24px)
     Drawable drawable;
     private TaskFragment taskFragment;
@@ -62,11 +66,11 @@ public class TaskActivity extends AppCompatActivity
 
             }
         });
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-         taskFragment = new TaskFragment();
+        taskFragment = new TaskFragment();
         this.replaceFragment(taskFragment,false);
         taskFragment.SetListener(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
 
 
     }

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,14 +34,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import techkids.vn.android7pomodoro.R;
 import techkids.vn.android7pomodoro.activities.TaskActivity;
 import techkids.vn.android7pomodoro.adapters.ColorAdapter;
-import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
 import techkids.vn.android7pomodoro.decorations.TaskColorSpaceDecor;
 import techkids.vn.android7pomodoro.networks.NetContext;
 import techkids.vn.android7pomodoro.networks.jsonmodels.AddNewTaskBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
-import techkids.vn.android7pomodoro.networks.jsonmodels.RegisterBodyJson;
 import techkids.vn.android7pomodoro.networks.services.AddNewTaskService;
+import techkids.vn.android7pomodoro.networks.services.EditTask;
 
 import static android.content.ContentValues.TAG;
 
@@ -58,13 +58,22 @@ public class TaskDetailFragment extends Fragment {
     EditText etPaymentPerHour;
     private String title;
     private Task task;
+    private Task newTask;
+
     public void setTitle(String title) {
         this.title = title;
     }
-
+    private Notifydata notifydata;
     public TaskDetailFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
+    }
+    public interface Notifydata {
+        void changedata();
+    }
+
+    public void setnotifydata(TaskDetailFragment.Notifydata notifydata){
+        this.notifydata = notifydata;
     }
 
     public void setTask(Task task) {
@@ -121,16 +130,22 @@ public class TaskDetailFragment extends Fragment {
             String color = colorAdapter.getSelectedColor();
            // Log.d(TAG, String.format("onOptionsItemSelected:%s ",paymentPerHour ));
             //Create a new Task
-            Task newTask = new Task(taskName,color,paymentPerHour);
+
+            String uuid = UUID.randomUUID().toString();
+
+            newTask = new Task(taskName,color,paymentPerHour,uuid);
+
             //Add to database
-            onOptionMenuBehavior.onClickOptionMenu(task,newTask);
-            getActivity().onBackPressed();
-            sendNewTask(newTask);
+            if (onOptionMenuBehavior.getClass() == AddNewTaskBehavior.class)
+            sendNewTask();
+            else sendEdit();
+
+
         }
         return false;
     }
 
-    private void sendNewTask(Task task) {
+    private void sendNewTask( ) {
 
         //add Header
         OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
@@ -158,13 +173,65 @@ public class TaskDetailFragment extends Fragment {
         AddNewTaskService addNewTaskService = retrofit.create(AddNewTaskService.class);
 
         MediaType mediaType = MediaType.parse("application/json");
-        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(task.getName(),true,task.getPaymentPerHour(),null,null,task.getColor()));
+        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor()));
         RequestBody requestBody = RequestBody.create(mediaType,json);
 
         addNewTaskService.addTask(requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
             @Override
             public void onResponse(Call<GetAllTaskResponeJson> call, Response<GetAllTaskResponeJson> response) {
                 Log.d(TAG, String.format("onResponse: &s", response.body()));
+
+
+                onOptionMenuBehavior.onClickOptionMenu(task,newTask);
+
+                getActivity().onBackPressed();
+
+                notifydata.changedata();
+            }
+
+            @Override
+            public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
+            }
+        });
+    }
+    private void sendEdit( ){
+        OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
+        httpclient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .method(original.method(),original.body())
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+        OkHttpClient client = httpclient.build();
+
+        Retrofit retrofit = new Retrofit
+                .Builder()
+                .baseUrl("http://a-task.herokuapp.com/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+        EditTask editTask = retrofit.create(EditTask.class);
+        MediaType mediaType = MediaType.parse("application/json");
+        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor()));
+        RequestBody requestBody = RequestBody.create(mediaType,json);
+
+        editTask.editTask(task.getLocalid(),requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
+            @Override
+            public void onResponse(Call<GetAllTaskResponeJson> call, Response<GetAllTaskResponeJson> response) {
+                Log.d(TAG, String.format("onResponse: %s", response.body()));
+
+                onOptionMenuBehavior.onClickOptionMenu(task,newTask);
+
+                getActivity().onBackPressed();
+
+                notifydata.changedata();
             }
 
             @Override

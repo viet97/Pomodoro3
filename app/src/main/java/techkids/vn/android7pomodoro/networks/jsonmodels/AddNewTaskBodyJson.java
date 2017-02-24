@@ -16,11 +16,11 @@ public class AddNewTaskBodyJson {
     @SerializedName("due_date")
     String date;
     @SerializedName("local_id")
-    SerializedName id;
+    String id;
     @SerializedName("color")
     String color;
 
-    public AddNewTaskBodyJson(String name, boolean done, float payment, String date, SerializedName id, String color) {
+    public AddNewTaskBodyJson(String name, boolean done, float payment, String date, String id, String color) {
         this.name = name;
         this.done = done;
         this.payment = payment;
@@ -61,11 +61,11 @@ public class AddNewTaskBodyJson {
         this.date = date;
     }
 
-    public SerializedName getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(SerializedName id) {
+    public void setId(String id) {
         this.id = id;
     }
 

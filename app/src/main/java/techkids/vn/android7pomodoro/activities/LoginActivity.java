@@ -2,10 +2,12 @@ package techkids.vn.android7pomodoro.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -107,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     private void attemptRegister() {
@@ -151,16 +154,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     private void sendLogin(String username, String password) {
 
         //1:create retrofit
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://a-task.herokuapp.com/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+
 
         //2:creat service
-        LoginService loginService = retrofit.create(LoginService.class);
+        LoginService loginService = NetContext.instance.creat();
 
         // data & format
         // format => MediaType
@@ -212,48 +213,8 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
         gotoTaskActivity();
 
-        //add Header
-        OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
-        httpclient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-
-                Request request = original.newBuilder()
-                        .header("Authorization","JWT "+ NetContext.instance.token)
-                        .method(original.method(),original.body())
-                        .build();
-                return chain.proceed(request);
-            }
-        });
-        OkHttpClient client = httpclient.build();
-        //Create Retrofit
-        Retrofit retrofit = new Retrofit
-                .Builder()
-                .baseUrl("http://a-task.herokuapp.com/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-        GetAllTaskService getAllTaskService = retrofit.create(GetAllTaskService.class);
-
-        getAllTaskService.getAllTask().enqueue(new Callback<List<GetAllTaskResponeJson>>() {
-            @Override
-            public void onResponse(Call<List<GetAllTaskResponeJson>> call, Response<List<GetAllTaskResponeJson>> response) {
-                for (GetAllTaskResponeJson getAllTaskResponeJson : response.body()) {
-                    Log.d(TAG, String.format("onResponse: %s", getAllTaskResponeJson));
-                    Task task = new Task(getAllTaskResponeJson.getName(),getAllTaskResponeJson.getColor(),getAllTaskResponeJson.getPayment());
-                    if (task.getName()!= null) {
-                        DbContext.instance.addTask(task);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
-                Log.d(TAG, "onFailure: ");
-            }
-        });
     }
+
     private void onRegisterSuccess() {
         Toast.makeText(this, "Register success", Toast.LENGTH_SHORT).show();
     }

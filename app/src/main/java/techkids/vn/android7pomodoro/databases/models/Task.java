@@ -8,15 +8,17 @@ public class Task {
     private String name;
     private String color;
     private float paymentPerHour;
+    private String localid;
     public Task(String name, String color) {
         this.name = name;
         this.color = color;
     }
 
-    public Task(String name, String color, float paymentPerHour) {
+    public Task(String name, String color, float paymentPerHour, String localid) {
         this.name = name;
         this.color = color;
         this.paymentPerHour = paymentPerHour;
+        this.localid = localid;
     }
 
     public String getName() {
@@ -43,11 +45,21 @@ public class Task {
         this.color = color;
     }
 
+    public String getLocalid() {
+        return localid;
+    }
+
+    public void setLocalid(String localid) {
+        this.localid = localid;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
                 "name='" + name + '\'' +
                 ", color='" + color + '\'' +
+                ", paymentPerHour=" + paymentPerHour +
+                ", localid='" + localid + '\'' +
                 '}';
     }
 }

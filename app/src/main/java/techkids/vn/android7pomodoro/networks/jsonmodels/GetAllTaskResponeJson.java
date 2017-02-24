@@ -16,10 +16,15 @@ public class GetAllTaskResponeJson {
     @SerializedName("color")
     String color;
 
-    public GetAllTaskResponeJson(String name, float payment, String color) {
+    @SerializedName("local_id")
+    String localid;
+
+
+    public GetAllTaskResponeJson(String name, float payment, String color, String localid) {
         this.name = name;
         this.payment = payment;
         this.color = color;
+        this.localid = localid;
     }
 
     public String getName() {
@@ -44,5 +49,23 @@ public class GetAllTaskResponeJson {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getLocalid() {
+        return localid;
+    }
+
+    public void setLocalid(String localid) {
+        this.localid = localid;
+    }
+
+    @Override
+    public String toString() {
+        return "GetAllTaskResponeJson{" +
+                "name='" + name + '\'' +
+                ", payment=" + payment +
+                ", color='" + color + '\'' +
+                ", localid='" + localid + '\'' +
+                '}';
     }
 }
