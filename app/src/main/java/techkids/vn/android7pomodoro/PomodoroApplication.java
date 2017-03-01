@@ -21,8 +21,8 @@ public class PomodoroApplication extends Application {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
         SharedPrefs.init(this);
-        for (Task task : DbContext.instance.alltask()){
-            Log.d(TAG, String.format("onCreate: %s", task));
-        }
+//        for (Task task : DbContext.instance.alltask()){
+//            Log.d(TAG, String.format("onCreate: %s", task));
+//        }
     }
 }

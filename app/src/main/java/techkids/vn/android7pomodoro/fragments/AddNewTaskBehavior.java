@@ -16,9 +16,9 @@ public class AddNewTaskBehavior implements OnOptionMenuBehavior {
     @Override
     public void onClickOptionMenu(Task task1,Task task) {
         //Create a new Task
-        Log.d(TAG, String.format("onClickOptionMenu:%s ", task.getLocalid()));
-        Task newTask = new Task(task.getName(),task.getColor(),task.getPaymentPerHour(),task.getLocalid());
+       Log.d(TAG, String.format("onClickOptionMenu:%s ", task.getId()));
+
         //Add to database
-        DbContext.instance.addTask(newTask);
+
     }
 }

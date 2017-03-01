@@ -41,6 +41,7 @@ import techkids.vn.android7pomodoro.networks.jsonmodels.AddNewTaskBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
 import techkids.vn.android7pomodoro.networks.services.AddNewTaskService;
 import techkids.vn.android7pomodoro.networks.services.EditTask;
+import techkids.vn.android7pomodoro.settings.SharedPrefs;
 
 import static android.content.ContentValues.TAG;
 
@@ -134,7 +135,7 @@ public class TaskDetailFragment extends Fragment {
             String uuid = UUID.randomUUID().toString();
 
             newTask = new Task(taskName,color,paymentPerHour,uuid);
-
+            Log.d(TAG, String.format("onOptionsItemSelected: %s",newTask.getId() ));
             //Add to database
             if (onOptionMenuBehavior.getClass() == AddNewTaskBehavior.class)
             sendNewTask();
@@ -155,7 +156,7 @@ public class TaskDetailFragment extends Fragment {
                 Request original = chain.request();
 
                 Request request = original.newBuilder()
-                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .header("Authorization","JWT "+ SharedPrefs.getInstance().getAccessToken())
                         .method(original.method(),original.body())
                         .build();
                 return chain.proceed(request);
@@ -173,7 +174,7 @@ public class TaskDetailFragment extends Fragment {
         AddNewTaskService addNewTaskService = retrofit.create(AddNewTaskService.class);
 
         MediaType mediaType = MediaType.parse("application/json");
-        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor()));
+        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor(),newTask.getId()));
         RequestBody requestBody = RequestBody.create(mediaType,json);
 
         addNewTaskService.addTask(requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
@@ -192,7 +193,6 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-                sendNewTask();
             }
         });
     }
@@ -204,7 +204,7 @@ public class TaskDetailFragment extends Fragment {
                 Request original = chain.request();
 
                 Request request = original.newBuilder()
-                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .header("Authorization","JWT "+ SharedPrefs.getInstance().getAccessToken())
                         .method(original.method(),original.body())
                         .build();
                 return chain.proceed(request);
@@ -220,7 +220,7 @@ public class TaskDetailFragment extends Fragment {
                 .build();
         EditTask editTask = retrofit.create(EditTask.class);
         MediaType mediaType = MediaType.parse("application/json");
-        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor()));
+        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor(),newTask.getId()));
         RequestBody requestBody = RequestBody.create(mediaType,json);
 
         editTask.editTask(task.getLocalid(),requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
@@ -238,7 +238,6 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-                sendEdit();
             }
         });
     }

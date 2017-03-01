@@ -16,17 +16,20 @@ public class AddNewTaskBodyJson {
     @SerializedName("due_date")
     String date;
     @SerializedName("local_id")
-    String id;
+    String localID;
     @SerializedName("color")
     String color;
+    @SerializedName("id")
+    String id;
 
-    public AddNewTaskBodyJson(String name, boolean done, float payment, String date, String id, String color) {
+    public AddNewTaskBodyJson(String name, boolean done, float payment, String date, String localID, String color, String id) {
         this.name = name;
         this.done = done;
         this.payment = payment;
         this.date = date;
-        this.id = id;
+        this.localID = localID;
         this.color = color;
+        this.id = id;
     }
 
     public String getName() {
@@ -61,12 +64,12 @@ public class AddNewTaskBodyJson {
         this.date = date;
     }
 
-    public String getId() {
-        return id;
+    public String getLocalID() {
+        return localID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setLocalID(String localID) {
+        this.localID = localID;
     }
 
     public String getColor() {
@@ -77,6 +80,14 @@ public class AddNewTaskBodyJson {
         this.color = color;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "AddNewTaskBodyJson{" +
@@ -84,8 +95,9 @@ public class AddNewTaskBodyJson {
                 ", done=" + done +
                 ", payment=" + payment +
                 ", date='" + date + '\'' +
-                ", id=" + id +
+                ", localID='" + localID + '\'' +
                 ", color='" + color + '\'' +
+                ", id='" + id + '\'' +
                 '}';
     }
 }

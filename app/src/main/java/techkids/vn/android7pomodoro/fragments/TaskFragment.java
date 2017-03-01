@@ -39,6 +39,7 @@ import techkids.vn.android7pomodoro.networks.jsonmodels.DeleteJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
 import techkids.vn.android7pomodoro.networks.services.DeleteService;
 import techkids.vn.android7pomodoro.networks.services.GetAllTaskService;
+import techkids.vn.android7pomodoro.settings.SharedPrefs;
 
 import static android.content.ContentValues.TAG;
 
@@ -74,7 +75,6 @@ public class TaskFragment extends Fragment {
     }
 
     private void setupUI(View view) {
-
         taskDetailFragment = new TaskDetailFragment();
         timerFragment = new TimerFragment();
         ButterKnife.bind(this,view);
@@ -109,6 +109,7 @@ public class TaskFragment extends Fragment {
         setHasOptionsMenu(true);
         //add Header
        getAllTask();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
         builder.setCancelable(true);
         builder.setTitle("Delete");
@@ -134,6 +135,7 @@ public class TaskFragment extends Fragment {
         taskAdapter.setTaskLongClickListener(new TaskAdapter.TaskLongClickListener() {
             @Override
             public void taskLongClick() {
+//                Log.d(TAG, "taskLongClick: %d", DbContext.instance.alltask().size());
                 dialog.show();
             }
         });
@@ -153,7 +155,7 @@ public class TaskFragment extends Fragment {
                 Request original = chain.request();
 
                 Request request = original.newBuilder()
-                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .header("Authorization","JWT "+ SharedPrefs.getInstance().getAccessToken())
                         .method(original.method(),original.body())
                         .build();
                 return chain.proceed(request);
@@ -171,19 +173,21 @@ public class TaskFragment extends Fragment {
 
         DeleteService deleteService = retrofit.create(DeleteService.class);
 
-        deleteService.deleteTask(DbContext.instance.tasks.get(taskAdapter.getSelection()).getLocalid()).enqueue(new Callback<DeleteJson>() {
+        deleteService.deleteTask(DbContext.instance.alltask().get(taskAdapter.getSelection()).getLocalid()).enqueue(new Callback<DeleteJson>() {
             @Override
             public void onResponse(Call<DeleteJson> call, Response<DeleteJson> response) {
+
                 Log.d(TAG, String.format("onResponse: %s",response.body() ));
-                DbContext.instance.tasks.remove(taskAdapter.getSelection());
+                DbContext.instance.deleteTask(DbContext.instance.alltask().get(taskAdapter.getSelection()));
+                getAllTask();
                 taskAdapter.notifyDataSetChanged();
+
 
             }
 
             @Override
             public void onFailure(Call<DeleteJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-                sendDelete();
 
             }
         });
@@ -197,7 +201,7 @@ public class TaskFragment extends Fragment {
                 Request original = chain.request();
 
                 Request request = original.newBuilder()
-                        .header("Authorization","JWT "+ NetContext.instance.token)
+                        .header("Authorization","JWT "+SharedPrefs.getInstance().getAccessToken())
                         .method(original.method(),original.body())
                         .build();
                 return chain.proceed(request);
@@ -217,16 +221,15 @@ public class TaskFragment extends Fragment {
         getAllTaskService.getAllTask().enqueue(new Callback<List<GetAllTaskResponeJson>>() {
             @Override
             public void onResponse(Call<List<GetAllTaskResponeJson>> call, Response<List<GetAllTaskResponeJson>> response) {
+                DbContext.instance.deleteAllTask();
                 List<GetAllTaskResponeJson> taskJsonList = response.body();
-                if (taskJsonList != null) {
-                    DbContext.instance.tasks.clear();
-                }
                 for (GetAllTaskResponeJson getAllTaskResponeJson : taskJsonList) {
 
                     Log.d(TAG, String.format("onResponse: %s", getAllTaskResponeJson));
                     Task task = new Task(getAllTaskResponeJson.getName(),getAllTaskResponeJson.getColor(),getAllTaskResponeJson.getPayment(),getAllTaskResponeJson.getLocalid());
+                    task.setId(getAllTaskResponeJson.getId());
                     if (task.getName()!= null) {
-                        DbContext.instance.addTask(task);
+                        DbContext.instance.addOrUpdate(task);
                         taskAdapter.notifyDataSetChanged();
                     }
                 }
@@ -235,7 +238,7 @@ public class TaskFragment extends Fragment {
             @Override
             public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-                getAllTask();
+
             }
         });
     }

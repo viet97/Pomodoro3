@@ -36,12 +36,14 @@ public class EditTaskBehavior implements OnOptionMenuBehavior {
     public void onClickOptionMenu(Task task1, Task task) {
 
         for (int i=0; i< DbContext.instance.alltask().size();i++){
-            if (DbContext.instance.alltask().get(i)==task1 ){
-                DbContext.instance.alltask().get(i).setColor(task.getColor());
-                DbContext.instance.alltask().get(i).setName(task.getName());
-                DbContext.instance.alltask().get(i).setPaymentPerHour(task.getPaymentPerHour());
-                DbContext.instance.alltask().get(i).setLocalid(task.getLocalid());
-            }
+//            if (DbContext.instance.alltask().get(i)==task1 ){
+//                DbContext.instance.alltask().get(i).setColor(task.getColor());
+//                DbContext.instance.alltask().get(i).setName(task.getName());
+//                DbContext.instance.alltask().get(i).setPaymentPerHour(task.getPaymentPerHour());
+//                DbContext.instance.alltask().get(i).setLocalid(task.getLocalid());
+//            }
+            task.setId(task1.getId());
+            DbContext.instance.addOrUpdate(task);
 
         }
 

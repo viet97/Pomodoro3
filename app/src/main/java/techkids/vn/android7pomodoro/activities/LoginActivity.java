@@ -76,8 +76,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-      // skipLoginIfPossible();
+
         setContentView(R.layout.activity_login);
+        skipLoginIfPossible();
         pb = (ProgressBar) this.findViewById(R.id.pb);
         etUsername = (EditText) this.findViewById(R.id.et_username);
         etPassword = (EditText) this.findViewById(R.id.et_password);
@@ -186,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             Log.d(TAG, String.format("onResponse, oh yeah: %s", loginResponseJson));
                             if (response.code() == 200) {
+                               token = loginResponseJson.getAccess_token();
                                 NetContext.instance.token = loginResponseJson.getAccess_token();
                                 onLoginSuccess();
                             }
@@ -210,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void    onLoginSuccess() {
-        SharedPrefs.getInstance().put(new LoginCredentials(username, password,token));
+        SharedPrefs.getInstance().put(new LoginCredentials(token, password,username));
         Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
         gotoTaskActivity();
 
