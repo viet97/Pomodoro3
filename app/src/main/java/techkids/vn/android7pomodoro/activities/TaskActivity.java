@@ -1,5 +1,6 @@
 package techkids.vn.android7pomodoro.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,11 +21,14 @@ import android.view.MenuItem;
 import butterknife.BindDrawable;
 import techkids.vn.android7pomodoro.R;
 import techkids.vn.android7pomodoro.adapters.TaskAdapter;
+import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.fragments.ReplaceFragmentListener;
 import techkids.vn.android7pomodoro.fragments.TaskFragment;
+import techkids.vn.android7pomodoro.networks.NetContext;
 
 public class TaskActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ReplaceFragmentListener{
+
     private static final String TAG = "TAG";
     private TaskAdapter.TaskLongClickListener taskLongClickListener;
     @BindDrawable(R.drawable.ic_arrow_back_black_24px)
@@ -33,6 +37,8 @@ public class TaskActivity extends AppCompatActivity
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
+        if (DbContext.instance ==null) DbContext.instance = new DbContext(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -107,7 +113,9 @@ public class TaskActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
+    public static Context getAppContext() {
+        return TaskActivity.getAppContext();
+    }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

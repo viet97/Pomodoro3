@@ -25,6 +25,7 @@
         android:id="@+id/tv_task_name"
         android:textSize="16sp"
         android:layout_toEndOf="@+id/v_task_color"
+        android:layout_marginRight="40dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_width="match_parent"
