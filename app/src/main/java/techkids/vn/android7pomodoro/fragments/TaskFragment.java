@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -63,6 +64,8 @@ public class TaskFragment extends Fragment {
     RecyclerView rvTask;
     @BindView(R.id.taskfragment)
     View layout;
+    @BindView(R.id.pb_taskfragment)
+    ProgressBar progressBar;
     public TaskFragment() {
         // Required empty public constructor
     }
@@ -268,6 +271,7 @@ public class TaskFragment extends Fragment {
     }
 
     private void getAllTask() {
+        progressBar.setVisibility(View.VISIBLE);
         OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
         httpclient.addInterceptor(new Interceptor() {
             @Override
@@ -295,6 +299,7 @@ public class TaskFragment extends Fragment {
         getAllTaskService.getAllTask().enqueue(new Callback<List<GetAllTaskResponeJson>>() {
             @Override
             public void onResponse(Call<List<GetAllTaskResponeJson>> call, Response<List<GetAllTaskResponeJson>> response) {
+                progressBar.setVisibility(View.INVISIBLE);
                 DbContext.instance.deleteAllTask();
                 List<GetAllTaskResponeJson> taskJsonList = response.body();
                 for (GetAllTaskResponeJson getAllTaskResponeJson : taskJsonList) {
@@ -314,6 +319,7 @@ public class TaskFragment extends Fragment {
             public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
                 layout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
     }

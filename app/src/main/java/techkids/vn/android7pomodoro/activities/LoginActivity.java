@@ -154,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                 pb.setVisibility(View.INVISIBLE);
                 Log.d(TAG, "onFailure: 0");
                 sendRegister(username,password);
+                onFailed(true);
             }
         });
     }
@@ -186,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                         LoginResponseJson loginResponseJson = response.body();
                         if (loginResponseJson == null) {
                             Log.d(TAG, "onResponse: Could not parse body");
+                            onFailed(false);
                         } else {
                             Log.d(TAG, String.format("onResponse, oh yeah: %s", loginResponseJson));
                             if (response.code() == 200) {
@@ -199,12 +201,17 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<LoginResponseJson> call, Throwable t) {
                         Log.d(TAG, String.format("onFailure: %s", t));
-                        sendLogin(username,password);
                         pb.setVisibility(View.INVISIBLE);
+                        onFailed(true);
+
                     }
                 });
 
 
+    }
+    private void onFailed(Boolean b){
+        if(b) Toast.makeText(this, "failed to connect internet", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "username or password is incorrect", Toast.LENGTH_SHORT).show();
     }
 
     private void skipLoginIfPossible() {
