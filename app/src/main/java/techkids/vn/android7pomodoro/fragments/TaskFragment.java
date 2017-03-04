@@ -9,12 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,8 +27,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,9 +41,11 @@ import techkids.vn.android7pomodoro.adapters.TaskAdapter;
 import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
 import techkids.vn.android7pomodoro.networks.NetContext;
+import techkids.vn.android7pomodoro.networks.jsonmodels.AddNewTaskBodyJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.DeleteJson;
 import techkids.vn.android7pomodoro.networks.jsonmodels.GetAllTaskResponeJson;
 import techkids.vn.android7pomodoro.networks.services.DeleteService;
+import techkids.vn.android7pomodoro.networks.services.EditTask;
 import techkids.vn.android7pomodoro.networks.services.GetAllTaskService;
 import techkids.vn.android7pomodoro.settings.SharedPrefs;
 
@@ -53,6 +61,8 @@ public class TaskFragment extends Fragment {
     public TaskAdapter taskAdapter;
     @BindView(R.id.rv_task)
     RecyclerView rvTask;
+    @BindView(R.id.taskfragment)
+    View layout;
     public TaskFragment() {
         // Required empty public constructor
     }
@@ -108,8 +118,69 @@ public class TaskFragment extends Fragment {
         rvTask.addItemDecoration(dividerItemDecoration);
         setHasOptionsMenu(true);
         //add Header
-       getAllTask();
+        getAllTask();
+        //OnFailed
+        taskDetailFragment.setOnFailedListener(new TaskDetailFragment.OnFailedListener() {
+            @Override
+            public void onFailed() {
+                Toast.makeText(getActivity(),"failed to connect internet",Toast.LENGTH_SHORT).show();
+            }
+        });
+        //checkDone
+      taskAdapter.setCheckDoneListner(new TaskAdapter.CheckDoneListener() {
+          @Override
+          public void checkListener(Task task) {
+              Task newTask = null;
+//              if (task.getDone() == false)
+              newTask = new Task(task.getId(),task.getName(),task.getColor(),task.getPaymentPerHour(),task.getLocalid(),!task.getDone());
 
+             // taskDetailFragment.sendEdit();
+
+                  OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
+                  httpclient.addInterceptor(new Interceptor() {
+                      @Override
+                      public okhttp3.Response intercept(Chain chain) throws IOException {
+                          Request original = chain.request();
+
+                          Request request = original.newBuilder()
+                                  .header("Authorization","JWT "+ SharedPrefs.getInstance().getAccessToken())
+                                  .method(original.method(),original.body())
+                                  .build();
+                          return chain.proceed(request);
+                      }
+                  });
+                  OkHttpClient client = httpclient.build();
+
+                  Retrofit retrofit = new Retrofit
+                          .Builder()
+                          .baseUrl("http://a-task.herokuapp.com/api/")
+                          .addConverterFactory(GsonConverterFactory.create())
+                          .client(client)
+                          .build();
+                  EditTask editTask = retrofit.create(EditTask.class);
+                  MediaType mediaType = MediaType.parse("application/json");
+                  final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),newTask.getDone(),newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor(),newTask.getId()));
+
+                  RequestBody requestBody = RequestBody.create(mediaType,json);
+
+              final Task finalNewTask = newTask;
+              editTask.editTask(task.getLocalid(),requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
+                      @Override
+                      public void onResponse(Call<GetAllTaskResponeJson> call, Response<GetAllTaskResponeJson> response) {
+                          Log.d(TAG, String.format("onResponse: %s", response.body()));
+
+                          DbContext.instance.addOrUpdate(finalNewTask);
+                      }
+
+                      @Override
+                      public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
+                          Log.d(TAG, String.format("onFailure: %s", t));
+                          Toast.makeText(getActivity(),"failed to connect internet",Toast.LENGTH_SHORT).show();
+
+                      }
+                  });
+          }
+      });
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
         builder.setCancelable(true);
         builder.setTitle("Delete");
@@ -142,6 +213,7 @@ public class TaskFragment extends Fragment {
         taskDetailFragment.setnotifydata(new TaskDetailFragment.Notifydata() {
             @Override
             public void changedata() {
+
                 taskAdapter.notifyDataSetChanged();
             }
         });
@@ -183,11 +255,13 @@ public class TaskFragment extends Fragment {
                 taskAdapter.notifyDataSetChanged();
 
 
+
             }
 
             @Override
             public void onFailure(Call<DeleteJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
+                Toast.makeText(getActivity(),"failed to connect internet",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -224,10 +298,11 @@ public class TaskFragment extends Fragment {
                 DbContext.instance.deleteAllTask();
                 List<GetAllTaskResponeJson> taskJsonList = response.body();
                 for (GetAllTaskResponeJson getAllTaskResponeJson : taskJsonList) {
-
+                    layout.setVisibility(View.VISIBLE);
                     Log.d(TAG, String.format("onResponse: %s", getAllTaskResponeJson));
                     Task task = new Task(getAllTaskResponeJson.getName(),getAllTaskResponeJson.getColor(),getAllTaskResponeJson.getPayment(),getAllTaskResponeJson.getLocalid());
                     task.setId(getAllTaskResponeJson.getId());
+                    task.setDone(getAllTaskResponeJson.getDone());
                     if (task.getName()!= null) {
                         DbContext.instance.addOrUpdate(task);
                         taskAdapter.notifyDataSetChanged();
@@ -238,7 +313,7 @@ public class TaskFragment extends Fragment {
             @Override
             public void onFailure(Call<List<GetAllTaskResponeJson>> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
-
+                layout.setVisibility(View.VISIBLE);
             }
         });
     }

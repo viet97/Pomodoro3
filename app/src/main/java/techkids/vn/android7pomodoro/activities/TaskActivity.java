@@ -37,10 +37,11 @@ public class TaskActivity extends AppCompatActivity
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
-        if (DbContext.instance ==null) DbContext.instance = new DbContext(this);
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        if (DbContext.instance ==null) DbContext.instance = new DbContext(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

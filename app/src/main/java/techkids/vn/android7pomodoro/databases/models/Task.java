@@ -18,13 +18,14 @@ public class Task extends RealmObject {
     private String color;
     private float paymentPerHour;
     private String localid;
+    private Boolean done;
 
 
 
-//    public Task(String name, String color) {
-//        this.name = name;
-//        this.color = color;
-//    }
+    public Task(String name, String color) {
+        this.name = name;
+        this.color = color;
+    }
 
     public Task(String name, String color, float paymentPerHour, String localid) {
 
@@ -33,9 +34,28 @@ public class Task extends RealmObject {
         this.paymentPerHour = paymentPerHour;
         this.localid = localid;
         id = UUID.randomUUID().toString();
+        this.done = false;
     }
+
+    public Task(String id, String name, String color, float paymentPerHour, String localid, Boolean done) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+        this.paymentPerHour = paymentPerHour;
+        this.localid = localid;
+        this.done = done;
+    }
+
     public Task() {
 
+    }
+
+    public Boolean getDone() {
+        return done;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
     }
 
     public String getId() {
@@ -78,13 +98,18 @@ public class Task extends RealmObject {
         this.localid = localid;
     }
 
+    public void checkdone(){
+        done = !done;
+    }
     @Override
     public String toString() {
         return "Task{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", color='" + color + '\'' +
                 ", paymentPerHour=" + paymentPerHour +
                 ", localid='" + localid + '\'' +
+//                ", done=" + done +
                 '}';
     }
 }

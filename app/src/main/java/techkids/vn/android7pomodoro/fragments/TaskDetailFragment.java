@@ -1,6 +1,7 @@
 package techkids.vn.android7pomodoro.fragments;
 
 
+import android.content.ClipData;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
@@ -60,7 +62,9 @@ public class TaskDetailFragment extends Fragment {
     private String title;
     private Task task;
     private Task newTask;
-
+    public OnFailedListener onFailedListener;
+//    @BindView(R.id.menu_item)
+//    Button buttonok;
     public void setTitle(String title) {
         this.title = title;
     }
@@ -73,10 +77,16 @@ public class TaskDetailFragment extends Fragment {
         void changedata();
     }
 
+    public interface OnFailedListener{
+        void onFailed();
+    }
+
+    public void setOnFailedListener(OnFailedListener onFailedListener){
+        this.onFailedListener = onFailedListener;
+    }
     public void setnotifydata(TaskDetailFragment.Notifydata notifydata){
         this.notifydata = notifydata;
     }
-
     public void setTask(Task task) {
         this.task = task;
     }
@@ -93,6 +103,7 @@ public class TaskDetailFragment extends Fragment {
 
     private void setupUI(View view) {
         ButterKnife.bind(this,view);
+//        buttonok.setEnabled(true);
         colorAdapter=new ColorAdapter();
         recyclerView.setAdapter(colorAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(),4));
@@ -125,6 +136,7 @@ public class TaskDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menu_item){
             //Get Data from UI
+//            buttonok.setEnabled(false);
             String taskName = etTaskName.getText().toString();
             String s = etPaymentPerHour.getText().toString().replace(",",".");
              float paymentPerHour = Float.parseFloat(s);
@@ -140,7 +152,7 @@ public class TaskDetailFragment extends Fragment {
             if (onOptionMenuBehavior.getClass() == AddNewTaskBehavior.class)
             sendNewTask();
             else sendEdit();
-
+            item.setEnabled(false);
 
         }
         return false;
@@ -188,15 +200,18 @@ public class TaskDetailFragment extends Fragment {
                 getActivity().onBackPressed();
 
                 notifydata.changedata();
+
             }
 
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
+                getActivity().onBackPressed();
                 Log.d(TAG, "onFailure: ");
+                onFailedListener.onFailed();
             }
         });
     }
-    private void sendEdit( ){
+    public void sendEdit( ){
         OkHttpClient.Builder httpclient = new OkHttpClient().newBuilder();
         httpclient.addInterceptor(new Interceptor() {
             @Override
@@ -220,7 +235,8 @@ public class TaskDetailFragment extends Fragment {
                 .build();
         EditTask editTask = retrofit.create(EditTask.class);
         MediaType mediaType = MediaType.parse("application/json");
-        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),true,newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor(),newTask.getId()));
+        final String json = (new Gson()).toJson(new AddNewTaskBodyJson(newTask.getName(),newTask.getDone(),newTask.getPaymentPerHour(),null,newTask.getLocalid(),newTask.getColor(),newTask.getId()));
+
         RequestBody requestBody = RequestBody.create(mediaType,json);
 
         editTask.editTask(task.getLocalid(),requestBody).enqueue(new Callback<GetAllTaskResponeJson>() {
@@ -238,6 +254,9 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<GetAllTaskResponeJson> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
+                onFailedListener.onFailed();
+                getActivity().onBackPressed();
+
             }
         });
     }

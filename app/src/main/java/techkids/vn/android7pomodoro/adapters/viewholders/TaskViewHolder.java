@@ -23,10 +23,20 @@ public class TaskViewHolder extends RecyclerView.ViewHolder {
     TextView tvTaskname;
     @BindView(R.id.time_task)
     ImageButton timeTask;
+    @BindView(R.id.check_color)
+    ImageButton checkColor;
     public TaskViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
 
+    }
+
+    public View getCheckColor() {
+        return checkColor;
+    }
+
+    public View getvTaskColor() {
+        return vTaskColor;
     }
 
     public ImageButton getTimeTask() {
@@ -40,5 +50,7 @@ public class TaskViewHolder extends RecyclerView.ViewHolder {
         drawable.setColor(Color.parseColor(task.getColor()));
         //2:Bind Task Name
         tvTaskname.setText(task.getName());
+        if (task.getDone()) checkColor.setVisibility(View.VISIBLE);
+        else checkColor.setVisibility(View.INVISIBLE);
     }
 }

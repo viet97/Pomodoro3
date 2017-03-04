@@ -132,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
         registerService.register(requestBody).enqueue(new Callback<RegisterResponseJson>() {
             @Override
             public void onResponse(Call<RegisterResponseJson> call, Response<RegisterResponseJson> response) {
+                pb.setVisibility(View.INVISIBLE);
               RegisterResponseJson registerResponseJson= response.body();
                 Log.d(TAG, "onResponse: 1");
                 if (registerResponseJson == null){
@@ -150,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<RegisterResponseJson> call, Throwable t) {
+                pb.setVisibility(View.INVISIBLE);
                 Log.d(TAG, "onFailure: 0");
                 sendRegister(username,password);
             }
@@ -198,6 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onFailure(Call<LoginResponseJson> call, Throwable t) {
                         Log.d(TAG, String.format("onFailure: %s", t));
                         sendLogin(username,password);
+                        pb.setVisibility(View.INVISIBLE);
                     }
                 });
 

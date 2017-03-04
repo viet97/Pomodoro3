@@ -36,7 +36,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private int selection;
     private String TAG = " Task adapter";
     private  TaskLongClickListener taskLongClickListener ;
-
+    private CheckDoneListener checkdone;
     public interface TaskItemClickListener{
         void onItemClick(Task task);
     }
@@ -47,6 +47,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     public interface TaskLongClickListener{
         void taskLongClick();
+    }
+    public interface CheckDoneListener{
+        void checkListener(Task task);
+    }
+    public void setCheckDoneListner(CheckDoneListener checkDoneListner) {
+       this.checkdone = checkDoneListner;
     }
 
      private TaskItemClickListener taskItemClickListener;
@@ -115,6 +121,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 taskLongClickListener.taskLongClick();
                 return false;
 
+            }
+        });
+        holder.getvTaskColor().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    holder.getCheckColor().setVisibility(View.VISIBLE);
+
+
+                checkdone.checkListener(task);
+                Log.d(TAG, "onClick: zo");
+
+            }
+        });
+        holder.getCheckColor().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.getCheckColor().setVisibility(View.INVISIBLE);
+                checkdone.checkListener(task);
+                Log.d(TAG, "onClick: 1");
             }
         });
 

@@ -22,6 +22,9 @@ public class GetAllTaskResponeJson {
     @SerializedName("id")
     String id;
 
+    @SerializedName("done")
+    Boolean done;
+
 
     public GetAllTaskResponeJson(String name, float payment, String color, String localid, String id) {
         this.name = name;
@@ -29,6 +32,15 @@ public class GetAllTaskResponeJson {
         this.color = color;
         this.localid = localid;
         this.id = id;
+        this.done = false;
+    }
+
+    public Boolean getDone() {
+        return done;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
     }
 
     public String getName() {
