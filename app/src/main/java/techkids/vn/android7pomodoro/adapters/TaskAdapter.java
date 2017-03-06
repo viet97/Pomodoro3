@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -22,6 +24,8 @@ import techkids.vn.android7pomodoro.R;
 import techkids.vn.android7pomodoro.adapters.viewholders.TaskViewHolder;
 import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
+import techkids.vn.android7pomodoro.events.TimerCommand;
+import techkids.vn.android7pomodoro.events.TimerCommandEvent;
 import techkids.vn.android7pomodoro.networks.NetContext;
 import techkids.vn.android7pomodoro.networks.jsonmodels.DeleteJson;
 import techkids.vn.android7pomodoro.networks.services.DeleteService;
@@ -111,6 +115,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             @Override
             public void onClick(View v) {
                 taskTimeClickListener.timeTaskClick(task);
+                TimerCommandEvent event = new TimerCommandEvent(TimerCommand.START_TIMER);
+                EventBus.getDefault().post(event);
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

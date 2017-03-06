@@ -28,6 +28,8 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
+
+        <service android:name=".services.PomodoroService" android:exported="false"></service>
     </application>
 
 </manifest>

@@ -36,7 +36,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginLeft="60dp"
             android:text="Start"
-            android:layout_below="@+id/pb_time"
+            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/button" />
@@ -45,42 +45,25 @@
             android:layout_marginRight="60dp"
             android:layout_alignParentEnd="true"
             android:text="Pause"
-            android:layout_below="@+id/pb_time"
+          android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <techkids.vn.android7pomodoro.activities.SquareLayout
+        <techkids.vn.android7pomodoro.activities.LSquareLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/button"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:layout_marginBottom="45dp"
             >
-            <TextView
-                android:id="@+id/progress"
-                android:layout_centerInParent="true"
-                android:textSize="20dp"
-                android:gravity="center"
-                android:layout_width="100dp"
-                android:layout_height="100dp" />
-            <TextView
-                android:id="@+id/progressdone"
-                android:layout_centerInParent="true"
-                android:text="DONE"
-                android:gravity="center"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:visibility="invisible"/>
               <com.github.lzyzsd.circleprogress.DonutProgress
-                  android:layout_width="150dp"
-                  android:layout_height="150dp"
-                  app:donut_max="100"
+                  android:layout_width="250dp"
+                  android:layout_height="250dp"
                   android:id="@+id/donutProgress"
                   android:layout_alignBottom="@+id/button"
                   android:layout_centerHorizontal="true"
                   android:rotation="-90"
                   />
-        </techkids.vn.android7pomodoro.activities.SquareLayout>
+        </techkids.vn.android7pomodoro.activities.LSquareLayout>
     </RelativeLayout>
 
 </FrameLayout>

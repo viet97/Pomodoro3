@@ -25,6 +25,7 @@ public class TaskViewHolder extends RecyclerView.ViewHolder {
     ImageButton timeTask;
     @BindView(R.id.check_color)
     ImageButton checkColor;
+
     public TaskViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);

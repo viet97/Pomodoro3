@@ -2,10 +2,12 @@ package techkids.vn.android7pomodoro;
 
 import android.app.Application;
 import android.content.AsyncTaskLoader;
+import android.content.Intent;
 import android.util.Log;
 
 import techkids.vn.android7pomodoro.databases.DbContext;
 import techkids.vn.android7pomodoro.databases.models.Task;
+import techkids.vn.android7pomodoro.services.PomodoroService;
 import techkids.vn.android7pomodoro.settings.SharedPrefs;
 
 /**
@@ -24,5 +26,7 @@ public class PomodoroApplication extends Application {
 //        for (Task task : DbContext.instance.alltask()){
 //            Log.d(TAG, String.format("onCreate: %s", task));
 //        }
+        Intent intent = new Intent(this, PomodoroService.class);
+        startService(intent);
     }
 }
