@@ -32,6 +32,10 @@ public class TimerFragment extends Fragment {
     Timer timer;
     @BindView(R.id.donutProgress)
     DonutProgress donutProgress;
+    @BindView(R.id.progress)
+            TextView progres;
+    @BindView(R.id.progressdone)
+    TextView progresdone;
     ReplaceFragmentListener r;
     public TimerFragment() {
         // Required empty public constructor
@@ -52,9 +56,11 @@ public class TimerFragment extends Fragment {
     @Subscribe
     public void onSetProgress(TimeProgress mili){
         donutProgress.setProgress(mili.getMili()/1000);
-        donutProgress.setText(""+mili.getMili()/1000);
-        if (donutProgress.getProgress() ==100) donutProgress.setText("DONE");
+        progres.setText(""+(int)donutProgress.getProgress());
+
+        if (donutProgress.getProgress() ==100) progresdone.setText("DONE");
         Log.d("TiME", String.format("onSetProgress:"));
+        donutProgress.setTextColor(000000);
 
 
     }
@@ -63,6 +69,12 @@ public class TimerFragment extends Fragment {
         EventBus.getDefault().register(this);
         ButterKnife.bind(this,view);
 
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     public void setListener(ReplaceFragmentListener r){
